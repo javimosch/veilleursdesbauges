@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VDB - Veilleurs des Bauges</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          maxWidth: {
+        '8xl': '1440px', // now you can use max-w-8xl
+      },
+         colors: {
+  'vdb-green': '#2F855A',   // main green (clean, modern)
+  'vdb-forest': '#1F5A3A',  // darker forest green
+  'vdb-sky': '#9AE6B4',     // soft alpine light green
+  'vdb-cream': '#F3F9F4',   // slightly fresher background
+}
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .hero-bg{
+      background:
+        linear-gradient(to bottom, rgba(0,0,0,0.35), rgba(0,0,0,0.6)),
+        url("https://i.ibb.co/mF0DN2y0/20251012-124743.jpg");
+      background-size: cover;
+      background-position: center;
+      animation: subtleZoom 20s ease-in-out infinite;
+    }
+    @keyframes subtleZoom {
+      0% { background-size: 100%; }
+      50% { background-size: 105%; }
+      100% { background-size: 100%; }
+    }
+    @media (max-width: 768px) {
+      .hero-bg {
+        animation: none;
+        background-size: cover;
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-vdb-cream text-gray-800 antialiased">
+
+<header class="absolute w-full z-10">
+  <div class="mx-auto px-6 py-5 flex flex-col items-center text-white">
+   
+    <nav class="hidden md:flex gap-8 text-sm justify-end w-full">
+      <a href="mailto:veilleursdesbauges@protonmail.com" class="hover:text-vdb-sky">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero-bg text-white min-h-[70vh] flex items-center">
+  <div class="max-w-5xl mx-auto px-6 text-center">
+     <div class="flex items-center justify-center mb-4">
+      <img src="https://i.ibb.co/3w6vn6f/vdb-logo.png" alt="VDB Logo" class="max-h-[300px]">
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+      Veilleurs des Bauges
+    </h1>
+    <p class="text-lg md:text-xl text-green-100 max-w-2xl mx-auto mb-8">
+      Association engagée pour la protection de l’environnement et le développement durable
+      dans le Massif des Bauges.
+    </p>
+    <a href="#newsletter" class="bg-vdb-green hover:bg-vdb-forest px-8 py-3 rounded-lg font-semibold shadow-lg transition">
+      Rejoindre la communauté
+    </a>
+  </div>
+</section>
+
+<main class="max-w-8xl mx-auto px-6 py-20">
+
+<section class="text-center mb-20">
+  <h2 class="text-3xl font-semibold text-vdb-forest mb-6">
+    Protégeons notre vallée
+  </h2>
+  <p class="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+    Les Veilleurs des Bauges œuvrent pour préserver la biodiversité, promouvoir des pratiques
+    écologiques et sensibiliser les habitants aux enjeux environnementaux.
+  </p>
+</section>
+
+<section class="grid md:grid-cols-3 gap-10 mb-24 max-w-8xl mx-auto">
+
+  <div class="bg-white p-10 rounded-xl shadow-md hover:shadow-xl transition">
+    <div class="text-4xl mb-5 text-center">🗺️</div>
+    <h3 class="text-xl font-semibold text-vdb-forest mb-3 text-center">Territoire d’action</h3>
+    <ul class="list-disc list-inside text-gray-600 space-y-2 text-left">
+      <li>Les 14 communes du Cœur des Bauges</li>
+      <li>Mise en place d’un réseau de sentinelles citoyennes représentant l’association dans chacune des communes</li>
+      <li>Présence aux conseils municipaux pour suivre les projets liés au territoire</li>
+    </ul>
+  </div>
+
+  <div class="bg-white p-10 rounded-xl shadow-md hover:shadow-xl transition">
+    <div class="text-4xl mb-5 text-center">🎯</div>
+    <h3 class="text-xl font-semibold text-vdb-forest mb-3 text-center">Objectifs de l’association</h3>
+    <ul class="list-disc list-inside text-gray-600 space-y-2 text-left">
+      <li>Veiller aux atteintes à l’intégrité paysagère</li>
+      <li>Veiller aux atteintes à la biodiversité</li>
+      <li>Encourager et exiger une participation démocratique et citoyenne dans les projets liés au paysage et à l’environnement</li>
+      <li>Demander la mise en place de démarches réellement participatives</li>
+      <li>Sensibiliser et informer sur la préservation du territoire et du patrimoine naturel</li>
+    </ul>
+  </div>
+
+  <div class="bg-white p-10 rounded-xl shadow-md hover:shadow-xl transition">
+    <div class="text-4xl mb-5 text-center">🛠️</div>
+    <h3 class="text-xl font-semibold text-vdb-forest mb-3 text-center">Moyens d’action</h3>
+    <ul class="list-disc list-inside text-gray-600 space-y-2 text-left">
+      <li>Communication et diffusion médiatique</li>
+      <li>Actions de sensibilisation aux enjeux des usages du territoire (coupes rases, aménagements, etc.)</li>
+      <li>Recours contentieux contre tout projet portant atteinte</li>
+      <li>Organisation d’événements et actions citoyennes dans toute la vallée</li>
+    </ul>
+  </div>
+
+</section>
+
+<section id="newsletter" class="bg-vdb-green text-white rounded-2xl p-12 text-center shadow-lg">
+
+  <h2 class="text-3xl font-semibold mb-4">
+    Devenez un Veilleur
+  </h2>
+
+  <p class="text-green-100 mb-8 max-w-xl mx-auto">
+    Recevez nos actualités, événements et actions pour protéger les Bauges.
+  </p>
+
+  <form id="newsletter-form" class="max-w-xl mx-auto">
+    <div class="flex flex-col sm:flex-row gap-4">
+      <input
+        type="email"
+        id="email-input"
+        placeholder="Votre adresse email"
+        class="flex-1 px-5 py-3 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-vdb-sky"
+        required
+      >
+      <button
+        type="submit"
+        class="bg-vdb-forest hover:bg-green-900 px-8 py-3 rounded-lg font-semibold transition shadow-md"
+      >
+        S'inscrire
+      </button>
+    </div>
+  </form>
+  <div id="toast" class="hidden fixed bottom-5 right-5 bg-vdb-forest text-white px-6 py-3 rounded-lg shadow-lg z-50"></div>
+  <script>
+    document.getElementById('newsletter-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const email = document.getElementById('email-input').value;
+      const toast = document.getElementById('toast');
+      toast.classList.remove('hidden');
+      toast.textContent = 'Envoi en cours...';
+      toast.className = 'fixed bottom-5 right-5 bg-vdb-forest text-white px-6 py-3 rounded-lg shadow-lg z-50';
+      try {
+        const response = await fetch('https://enbauges.fr/api/waiting-list/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email, type: 'subscriber' })
+        });
+        if (response.ok) {
+          toast.textContent = 'Merci pour votre inscription !';
+          toast.className = 'fixed bottom-5 right-5 bg-vdb-green text-white px-6 py-3 rounded-lg shadow-lg z-50';
+          document.getElementById('email-input').value = '';
+        } else {
+          toast.textContent = 'Erreur lors de l\'inscription. Veuillez réessayer.';
+          toast.className = 'fixed bottom-5 right-5 bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+        }
+      } catch (error) {
+        toast.textContent = 'Erreur de connexion. Veuillez réessayer.';
+        toast.className = 'fixed bottom-5 right-5 bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+      }
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3000);
+    });
+  </script>
+
+</section>
+
+</main>
+
+<footer class="bg-vdb-forest text-white py-10">
+
+  <div class="max-w-6xl mx-auto px-6 text-center">
+
+   
+
+    <p class="text-xs text-green-300 mt-6">
+      Association Veilleurs des Bauges — Association loi 1901
+    </p>
+     <p class="text-green-200 text-sm">
+      Massif des Bauges · Savoie · France
+    </p>
+    <p class="text-green-200 text-sm mt-2">
+      <a href="mailto:veilleursdesbauges@protonmail.com" class="hover:text-vdb-sky">veilleursdesbauges@protonmail.com</a>
+    </p>
+
+  </div>
+
+</footer>
+
+</body>
+</html>
