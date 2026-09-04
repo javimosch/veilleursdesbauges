@@ -313,7 +313,7 @@ async function uploadAttachments(signalementId) {
         ct = file.type || (file.name.match(/\.pdf$/i) ? 'application/pdf' : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
       }
       progress.innerHTML = 'Envoi du fichier ' + (i+1) + '/' + selectedFiles.length + ' (' + (blob.size/1024).toFixed(0) + ' KB)...';
-      var resp = await fetch(BKN_URL + '/v1/hooks/signalement-attachment?id=' + signalementId, {
+      var resp = await fetch(BKN_URL + '/v1/hooks/signalement-attachment?id=' + signalementId + '&name=' + encodeURIComponent(file.name), {
         method: 'POST',
         headers: { 'Content-Type': ct },
         body: blob
