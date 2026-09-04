@@ -18,8 +18,8 @@ function main(input) {
   var prefix = bodyB64.substring(0, 12);
   var isJpeg = prefix.indexOf("/9j/") === 0;
   var isPng = prefix.indexOf("iVBOR") === 0;
-  var isPdf = prefix.indexOf("JVBERi") === 0;       // %PDF
-  var isDocx = prefix.indexOf("UEsDB") === 0;        // PK\x03\x04 (ZIP/OOXML)
+  var isPdf = prefix.indexOf("JVBERi") === 0;
+  var isDocx = prefix.indexOf("UEsDB") === 0;
   if (!isJpeg && !isPng && !isPdf && !isDocx) {
     return { status: 400, body: { ok: false, error: "file does not appear to be a valid image, PDF, or DOCX" } };
   }
@@ -45,12 +45,23 @@ function main(input) {
     return { status: 400, body: { ok: false, error: "max 5 attachments allowed" } };
   }
 
-  // Determine extension and stored content-type from magic bytes (not from header)
+  // Determine extension and stored content-type from magic bytes
   var ext, storedCt;
   if (isJpeg) { ext = "jpg"; storedCt = "image/jpeg"; }
   else if (isPng) { ext = "png"; storedCt = "image/png"; }
   else if (isPdf) { ext = "pdf"; storedCt = "application/pdf"; }
   else { ext = "docx"; storedCt = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"; }
+
+  // Preserve original filename (sanitized)
+  var originalName = input.query.name || "";
+  if (originalName) {
+    // Strip path components, keep only the filename
+    originalName = originalName.split("/").pop().split("\\").pop();
+    // Remove dangerous chars, keep alnum/dot/dash/underscore/space
+    originalName = originalName.replace(/[^a-zA-Z0-9.\-_ ]/g, "");
+    // Limit length
+    if (originalName.length > 200) originalName = originalName.substring(0, 200);
+  }
 
   var rand = bkn.crypto.hmac("att", bkn.now() + "" + attachments.length).substring(0, 8);
   var fileName = signalementId + "-" + attachments.length + "-" + rand + "." + ext;
@@ -61,6 +72,7 @@ function main(input) {
 
   attachments.push({
     name: fileName,
+    original_name: originalName,
     content_type: storedCt,
     size: f.size,
     uploaded_at: bkn.now()

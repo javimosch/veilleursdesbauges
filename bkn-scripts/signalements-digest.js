@@ -26,9 +26,13 @@ function main(input) {
   html += ".attachments a{display:block}";
   html += ".attachments img{width:120px;height:120px;object-fit:cover;border-radius:8px;border:1px solid #e0e0e0;cursor:pointer;transition:opacity 0.2s}";
   html += ".attachments img:hover{opacity:0.8}";
+  html += ".att-img-wrap{display:flex;flex-direction:column;align-items:center;gap:2px;max-width:120px}";
+  html += ".att-img-name{font-size:11px;color:#888;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px}";
   html += ".doc-link{display:flex;align-items:center;gap:6px;padding:8px 12px;background:#f3f9f4;border:1px solid #e0e0e0;border-radius:8px;text-decoration:none;color:#1f5a3a;font-size:13px;transition:background 0.2s}";
   html += ".doc-link:hover{background:#e6f4ea}";
   html += ".doc-icon{font-size:20px}";
+  html += ".doc-name{font-weight:500}";
+  html += ".doc-size{color:#888;font-size:11px}";
   html += "</style></head><body><div class=\"container\">";
   html += "<h1>Signalements citoyens</h1>";
   html += "<p class=\"meta\">Association Veilleurs des Bauges — " + records.length + " signalement(s)</p>";
@@ -94,22 +98,24 @@ function main(input) {
         for (var j = 0; j < atts.length; j++) {
           var ct = atts[j].content_type || "image/jpeg";
           var rawUrl = "https://bkn.intrane.fr/v1/files/veilleurs-attachments/" + atts[j].name;
+          var displayName = atts[j].original_name || atts[j].name;
+          var sizeKb = Math.round(atts[j].size / 1024);
           if (ct.indexOf("image/") === 0) {
-            // Inline image as data URI
             var fileData = bkn.files.get("veilleurs-attachments", atts[j].name, { encoding: "base64" });
             if (fileData) {
+              html += "<div class=\"att-img-wrap\">";
               html += "<a href=\"" + rawUrl + "\" target=\"_blank\" rel=\"noopener\">";
-              html += "<img src=\"data:" + ct + ";base64," + fileData.content + "\" alt=\"image " + (j+1) + "\" title=\"Cliquez pour ouvrir en grand\">";
+              html += "<img src=\"data:" + ct + ";base64," + fileData.content + "\" alt=\"" + displayName + "\" title=\"" + displayName + " — cliquez pour ouvrir\">";
               html += "</a>";
+              html += "<span class=\"att-img-name\" title=\"" + displayName + "\">" + displayName + "</span>";
+              html += "</div>";
             }
           } else {
-            // Document — show as clickable link
             var icon = ct === "application/pdf" ? "📄" : "📝";
             var label = ct === "application/pdf" ? "PDF" : "DOCX";
-            var sizeKb = Math.round(atts[j].size / 1024);
             html += "<a href=\"" + rawUrl + "\" target=\"_blank\" rel=\"noopener\" class=\"doc-link\">";
             html += "<span class=\"doc-icon\">" + icon + "</span>";
-            html += "<span>" + label + " · " + sizeKb + " KB</span>";
+            html += "<span><span class=\"doc-name\">" + displayName + "</span><br><span class=\"doc-size\">" + label + " · " + sizeKb + " KB</span></span>";
             html += "</a>";
           }
         }
