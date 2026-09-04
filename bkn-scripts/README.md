@@ -9,7 +9,7 @@ Backed up here for rollback and reproducibility.
 |------|----------------|-------------|
 | `newsletter-subscribe.js` | `newsletter-subscribe` | Newsletter signup, stores to `veilleurs/subscribers` |
 | `signalement-create.js` | `signalement-create` | Citizen report form, stores to `veilleurs/signalements` (with `attachments: []`) |
-| `signalement-attachment.js` | `signalement-attachment` | Image upload for signalements (max 5, JPEG/PNG, magic bytes check) |
+| `signalement-attachment.js` | `signalement-attachment` | File upload for signalements (max 5, JPEG/PNG/PDF/DOCX, magic bytes check) |
 | `signalements-digest.js` | `signalements-digest` | Hourly cron, publishes signalements to hart (with attachment thumbnails) |
 
 ## Collections
@@ -23,7 +23,7 @@ Backed up here for rollback and reproducibility.
 |------|--------|-------------|------------|-----------|
 | `newsletter-subscribe` | `newsletter-subscribe` | veilleursdesbauges.fr, www | 5/min | 1 MiB |
 | `signalement-create` | `signalement-create` | veilleursdesbauges.fr, www | 3/min | 512 KB |
-| `signalement-attachment` | `signalement-attachment` | veilleursdesbauges.fr, www | 10/min | 5 MB |
+| `signalement-attachment` | `signalement-attachment` | veilleursdesbauges.fr, www | 10/min | 10 MB |
 
 ## Cron
 
@@ -35,7 +35,7 @@ Backed up here for rollback and reproducibility.
 
 | Namespace | Public | Allow types | Description |
 |-----------|--------|-------------|-------------|
-| `veilleurs-attachments` | yes | image/jpeg, image/png | Signalement photo attachments |
+| `veilleurs-attachments` | yes | image/jpeg, image/png, application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document | Signalement attachments (photos + documents) |
 
 ## Restore
 
@@ -50,13 +50,17 @@ bkn script create newsletter-subscribe -file bkn-scripts/newsletter-subscribe.js
 bkn script create signalement-create -file bkn-scripts/signalement-create.js \
   -description "Citizen report form for veilleursdesbauges.fr" -timeout 5000
 bkn script create signalement-attachment -file bkn-scripts/signalement-attachment.js \
-  -description "Attachment upload for signalements (max 5, JPEG/PNG only)" -timeout 10000
+  -description "Attachment upload for signalements (max 5, images+PDF+DOCX)" -timeout 15000
 bkn script create signalements-digest -file bkn-scripts/signalements-digest.js \
   -description "Collect signalements and publish to hart" -timeout 15000 \
   -allow-net hart.intrane.fr
 
 # Recreate files namespace
-bkn files ns create veilleurs-attachments --allow-type image/jpeg --allow-type image/png --public
+bkn files ns create veilleurs-attachments \
+  --allow-type image/jpeg --allow-type image/png \
+  --allow-type application/pdf \
+  --allow-type "application/vnd.openxmlformats-officedocument.wordprocessingml.document" \
+  --public
 
 # Recreate hooks
 bkn hooks create newsletter-subscribe -script newsletter-subscribe \

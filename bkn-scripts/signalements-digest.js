@@ -22,10 +22,13 @@ function main(input) {
   html += ".tag{font-size:12px;padding:2px 8px;border-radius:4px;background:#e6f4ea;color:#2f855a}";
   html += ".empty{text-align:center;padding:40px;color:#888}";
   html += ".footer{text-align:center;margin-top:24px;font-size:12px;color:#aaa}";
-  html += ".attachments{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}";
+  html += ".attachments{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;align-items:flex-start}";
   html += ".attachments a{display:block}";
   html += ".attachments img{width:120px;height:120px;object-fit:cover;border-radius:8px;border:1px solid #e0e0e0;cursor:pointer;transition:opacity 0.2s}";
   html += ".attachments img:hover{opacity:0.8}";
+  html += ".doc-link{display:flex;align-items:center;gap:6px;padding:8px 12px;background:#f3f9f4;border:1px solid #e0e0e0;border-radius:8px;text-decoration:none;color:#1f5a3a;font-size:13px;transition:background 0.2s}";
+  html += ".doc-link:hover{background:#e6f4ea}";
+  html += ".doc-icon{font-size:20px}";
   html += "</style></head><body><div class=\"container\">";
   html += "<h1>Signalements citoyens</h1>";
   html += "<p class=\"meta\">Association Veilleurs des Bauges — " + records.length + " signalement(s)</p>";
@@ -84,17 +87,29 @@ function main(input) {
         html += "</div></div>";
       }
 
-      // Attachments — inline as data URIs, clickable to open raw on bkn
+      // Attachments — images inlined as data URIs, docs as clickable links
       var atts = r.attachments || [];
       if (atts.length > 0) {
-        html += "<div class=\"card-section\"><div class=\"label\">Images (" + atts.length + ")</div><div class=\"attachments\">";
+        html += "<div class=\"card-section\"><div class=\"label\">Fichiers (" + atts.length + ")</div><div class=\"attachments\">";
         for (var j = 0; j < atts.length; j++) {
-          var fileData = bkn.files.get("veilleurs-attachments", atts[j].name, { encoding: "base64" });
-          if (fileData) {
-            var mime = atts[j].content_type || "image/jpeg";
-            var rawUrl = "https://bkn.intrane.fr/v1/files/veilleurs-attachments/" + atts[j].name;
-            html += "<a href=\"" + rawUrl + "\" target=\"_blank\" rel=\"noopener\">";
-            html += "<img src=\"data:" + mime + ";base64," + fileData.content + "\" alt=\"image " + (j+1) + "\" title=\"Cliquez pour ouvrir en grand\">";
+          var ct = atts[j].content_type || "image/jpeg";
+          var rawUrl = "https://bkn.intrane.fr/v1/files/veilleurs-attachments/" + atts[j].name;
+          if (ct.indexOf("image/") === 0) {
+            // Inline image as data URI
+            var fileData = bkn.files.get("veilleurs-attachments", atts[j].name, { encoding: "base64" });
+            if (fileData) {
+              html += "<a href=\"" + rawUrl + "\" target=\"_blank\" rel=\"noopener\">";
+              html += "<img src=\"data:" + ct + ";base64," + fileData.content + "\" alt=\"image " + (j+1) + "\" title=\"Cliquez pour ouvrir en grand\">";
+              html += "</a>";
+            }
+          } else {
+            // Document — show as clickable link
+            var icon = ct === "application/pdf" ? "📄" : "📝";
+            var label = ct === "application/pdf" ? "PDF" : "DOCX";
+            var sizeKb = Math.round(atts[j].size / 1024);
+            html += "<a href=\"" + rawUrl + "\" target=\"_blank\" rel=\"noopener\" class=\"doc-link\">";
+            html += "<span class=\"doc-icon\">" + icon + "</span>";
+            html += "<span>" + label + " · " + sizeKb + " KB</span>";
             html += "</a>";
           }
         }
