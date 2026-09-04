@@ -167,6 +167,15 @@
       </div>
     </fieldset>
 
+    <!-- 6b. Photos / images (optional, max 5) -->
+    <fieldset class="bg-white rounded-xl shadow-md p-6">
+      <legend class="text-lg font-semibold text-vdb-forest px-3">6b. Photos (facultatif, max 5)</legend>
+      <p class="text-sm text-gray-600 mt-4 mb-3">Vous pouvez joindre jusqu'à 5 photos pour illustrer votre signalement. Les images sont redimensionnées automatiquement (max 1280px, JPEG).</p>
+      <input type="file" id="file-input" accept="image/jpeg,image/png" multiple class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-vdb-sky file:text-vdb-forest hover:file:bg-vdb-green hover:file:text-white cursor-pointer">
+      <div id="file-previews" class="mt-4 space-y-2"></div>
+      <div id="upload-progress" class="mt-3 text-sm hidden"></div>
+    </fieldset>
+
     <!-- 7. Niveau d'information -->
     <fieldset class="bg-white rounded-xl shadow-md p-6">
       <legend class="text-lg font-semibold text-vdb-forest px-3">7. Niveau d'information</legend>
@@ -220,9 +229,87 @@
 </footer>
 
 <script>
+var BKN_URL = 'https://bkn.intrane.fr';
+var selectedFiles = [];
+
 function getChecked(name) {
   return Array.from(document.querySelectorAll('input[name="' + name + '"]:checked')).map(function(el) { return el.value; });
 }
+
+// --- Canvas resize + EXIF strip ---
+function resizeImage(file, maxDim, quality) {
+  return new Promise(function(resolve, reject) {
+    var img = new Image();
+    var url = URL.createObjectURL(file);
+    img.onload = function() {
+      URL.revokeObjectURL(url);
+      var w = img.width, h = img.height;
+      if (w > h && w > maxDim) { h = Math.round(h * maxDim / w); w = maxDim; }
+      else if (h > maxDim) { w = Math.round(w * maxDim / h); h = maxDim; }
+      var canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+      canvas.toBlob(function(blob) { resolve(blob); }, 'image/jpeg', quality || 0.8);
+    };
+    img.onerror = function() { URL.revokeObjectURL(url); reject(new Error('cannot load image')); };
+    img.src = url;
+  });
+}
+
+// --- File selection + preview ---
+document.getElementById('file-input').addEventListener('change', function(e) {
+  var files = Array.from(e.target.files).slice(0, 5);
+  selectedFiles = files;
+  var previews = document.getElementById('file-previews');
+  previews.innerHTML = '';
+  files.forEach(function(file, i) {
+    var card = document.createElement('div');
+    card.className = 'flex items-center gap-3 bg-vdb-cream rounded-lg p-2';
+    var img = document.createElement('img');
+    img.className = 'w-16 h-16 object-cover rounded';
+    img.src = URL.createObjectURL(file);
+    var info = document.createElement('div');
+    info.className = 'text-xs text-gray-500';
+    info.innerHTML = '<strong>' + file.name + '</strong> · ' + (file.type || '?') + ' · ' + (file.size / 1024).toFixed(0) + ' KB';
+    card.appendChild(img);
+    card.appendChild(info);
+    previews.appendChild(card);
+  });
+});
+
+// --- Upload attachments after signalement creation ---
+async function uploadAttachments(signalementId) {
+  if (selectedFiles.length === 0) return true;
+  var progress = document.getElementById('upload-progress');
+  progress.classList.remove('hidden');
+  var allOk = true;
+  for (var i = 0; i < selectedFiles.length; i++) {
+    progress.innerHTML = 'Traitement de l\'image ' + (i+1) + '/' + selectedFiles.length + '...';
+    try {
+      var blob = await resizeImage(selectedFiles[i], 1280, 0.8);
+      progress.innerHTML = 'Envoi de l\'image ' + (i+1) + '/' + selectedFiles.length + ' (' + (blob.size/1024).toFixed(0) + ' KB)...';
+      var resp = await fetch(BKN_URL + '/v1/hooks/signalement-attachment?id=' + signalementId, {
+        method: 'POST',
+        headers: { 'Content-Type': 'image/jpeg' },
+        body: blob
+      });
+      var data = await resp.json();
+      if (!data.ok) {
+        progress.innerHTML += ' <span class="text-red-600">Erreur: ' + (data.error || 'inconnue') + '</span><br>';
+        allOk = false;
+      } else {
+        progress.innerHTML += ' <span class="text-vdb-green">OK (' + data.count + '/5)</span><br>';
+      }
+    } catch(e) {
+      progress.innerHTML += ' <span class="text-red-600">Erreur: ' + e.message + '</span><br>';
+      allOk = false;
+    }
+  }
+  return allOk;
+}
+
+// --- Form submit ---
 document.getElementById('signalement-form').addEventListener('submit', async function(e) {
   e.preventDefault();
   var toast = document.getElementById('toast');
@@ -255,24 +342,33 @@ document.getElementById('signalement-form').addEventListener('submit', async fun
     source: 'veilleursdesbauges.fr'
   };
   try {
-    var response = await fetch('https://bkn.intrane.fr/v1/hooks/signalement-create', {
+    var response = await fetch(BKN_URL + '/v1/hooks/signalement-create', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });
-    if (response.ok) {
+    var result = await response.json();
+    if (result.ok) {
+      // Upload attachments if any
+      if (selectedFiles.length > 0) {
+        toast.textContent = 'Signalement créé, envoi des images...';
+        await uploadAttachments(result.id);
+      }
       toast.textContent = 'Signalement envoyé. Merci pour votre contribution !';
       toast.className = 'fixed bottom-5 right-5 bg-vdb-green text-white px-6 py-3 rounded-lg shadow-lg z-50';
       this.reset();
+      selectedFiles = [];
+      document.getElementById('file-previews').innerHTML = '';
+      document.getElementById('upload-progress').classList.add('hidden');
     } else {
-      toast.textContent = 'Erreur lors de l\'envoi. Veuillez réessayer.';
+      toast.textContent = 'Erreur : ' + (result.error || 'veuillez réessayer');
       toast.className = 'fixed bottom-5 right-5 bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg z-50';
     }
   } catch (err) {
     toast.textContent = 'Erreur de connexion. Veuillez réessayer.';
     toast.className = 'fixed bottom-5 right-5 bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg z-50';
   }
-  setTimeout(function() { toast.classList.add('hidden'); }, 5000);
+  setTimeout(function() { toast.classList.add('hidden'); }, 6000);
 });
 </script>
 
