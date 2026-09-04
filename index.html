@@ -269,7 +269,8 @@
         var h = d.getHours().toString().padStart(2,'0') + 'h' + d.getMinutes().toString().padStart(2,'0');
         var loc = e.location ? '<span class="text-gray-500"> · ' + e.location + '</span>' : '';
         var desc = e.description ? '<p class="text-sm text-gray-500 mt-1">' + e.description.substring(0,160) + (e.description.length > 160 ? '…' : '') + '</p>' : '';
-        return '<div class="bg-white rounded-xl shadow-md p-6 flex gap-5 items-start">' +
+        var link = 'https://enbauges.fr/calendrier#/event/' + e._id;
+        return '<a href="' + link + '" target="_blank" rel="noopener" class="block bg-white rounded-xl shadow-md p-6 flex gap-5 items-start hover:shadow-lg transition">' +
           '<div class="flex-shrink-0 text-center bg-vdb-cream rounded-lg px-4 py-2">' +
             '<div class="text-xs text-vdb-green font-semibold uppercase">' + months[d.getMonth()] + '</div>' +
             '<div class="text-2xl font-bold text-vdb-forest">' + d.getDate() + '</div>' +
@@ -279,7 +280,7 @@
             '<p class="text-sm text-vdb-green">' + dateStr + ' · ' + h + loc + '</p>' +
             desc +
           '</div>' +
-        '</div>';
+        '</a>';
       }).join('');
     })
     .catch(function() {
