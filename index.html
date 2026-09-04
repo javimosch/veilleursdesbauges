@@ -166,10 +166,10 @@
       toast.textContent = 'Envoi en cours...';
       toast.className = 'fixed bottom-5 right-5 bg-vdb-forest text-white px-6 py-3 rounded-lg shadow-lg z-50';
       try {
-        const response = await fetch('https://enbauges.fr/api/waiting-list/subscribe', {
+        const response = await fetch('https://bkn.intrane.fr/v1/hooks/newsletter-subscribe', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: email, type: 'subscriber' })
+          body: JSON.stringify({ email: email, type: 'subscriber', source: 'veilleursdesbauges.fr' })
         });
         if (response.ok) {
           toast.textContent = 'Merci pour votre inscription !';
