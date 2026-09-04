@@ -23,7 +23,8 @@ function main(input) {
     engagement: body.engagement,
     source: body.source || "veilleursdesbauges.fr",
     status: "new",
-    created_at: bkn.now()
+    created_at: bkn.now(),
+    attachments: []
   };
   var saved = bkn.store.put("veilleurs/signalements", record);
   return { status: 200, body: { ok: true, id: saved.id, message: "signalement received" } };
