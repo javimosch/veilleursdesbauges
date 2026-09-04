@@ -152,6 +152,14 @@
   </a>
 </section>
 
+<section id="agenda" class="max-w-8xl mx-auto px-6 py-16">
+  <h2 class="text-3xl font-semibold text-vdb-forest mb-3 text-center">Agenda</h2>
+  <p class="text-center text-gray-500 mb-10">Nos prochains rendez-vous — partagés sur le calendrier du <a href="https://enbauges.fr/calendrier" class="text-vdb-green hover:underline" target="_blank" rel="noopener">Cœur des Bauges</a></p>
+  <div id="agenda-events" class="max-w-3xl mx-auto space-y-4">
+    <div class="text-center text-gray-400 py-8">Chargement des événements…</div>
+  </div>
+</section>
+
 <section id="newsletter" class="bg-vdb-green text-white rounded-2xl p-12 text-center shadow-lg">
 
   <h2 class="text-3xl font-semibold mb-4">
@@ -235,6 +243,50 @@
   </div>
 
 </footer>
+
+<script>
+(function() {
+  var container = document.getElementById('agenda-events');
+  if (!container) return;
+  fetch('https://enbauges.fr/calendrier/api')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      var now = new Date().toISOString();
+      var events = (data.entries || [])
+        .filter(function(e) {
+          return e.tags && e.tags.indexOf('association') !== -1 && e.startDate >= now;
+        })
+        .sort(function(a, b) { return a.startDate < b.startDate ? -1 : 1; });
+      if (events.length === 0) {
+        container.innerHTML = '<div class="text-center text-gray-400 py-8">Aucun événement à venir.</div>';
+        return;
+      }
+      container.innerHTML = events.map(function(e) {
+        var d = new Date(e.startDate);
+        var days = ['dim','lun','mar','mer','jeu','ven','sam'];
+        var months = ['jan','fév','mar','avr','mai','juin','juil','août','sep','oct','nov','déc'];
+        var dateStr = days[d.getDay()] + ' ' + d.getDate() + ' ' + months[d.getMonth()];
+        var h = d.getHours().toString().padStart(2,'0') + 'h' + d.getMinutes().toString().padStart(2,'0');
+        var loc = e.location ? '<span class="text-gray-500"> · ' + e.location + '</span>' : '';
+        var desc = e.description ? '<p class="text-sm text-gray-500 mt-1">' + e.description.substring(0,160) + (e.description.length > 160 ? '…' : '') + '</p>' : '';
+        return '<div class="bg-white rounded-xl shadow-md p-6 flex gap-5 items-start">' +
+          '<div class="flex-shrink-0 text-center bg-vdb-cream rounded-lg px-4 py-2">' +
+            '<div class="text-xs text-vdb-green font-semibold uppercase">' + months[d.getMonth()] + '</div>' +
+            '<div class="text-2xl font-bold text-vdb-forest">' + d.getDate() + '</div>' +
+          '</div>' +
+          '<div class="flex-1">' +
+            '<h3 class="font-semibold text-gray-800">' + e.title + '</h3>' +
+            '<p class="text-sm text-vdb-green">' + dateStr + ' · ' + h + loc + '</p>' +
+            desc +
+          '</div>' +
+        '</div>';
+      }).join('');
+    })
+    .catch(function() {
+      container.innerHTML = '<div class="text-center text-gray-400 py-8">Calendrier momentanément indisponible. <a href="https://enbauges.fr/calendrier" class="text-vdb-green hover:underline" target="_blank" rel="noopener">Voir tous les événements</a></div>';
+    });
+})();
+</script>
 
 </body>
 </html>
