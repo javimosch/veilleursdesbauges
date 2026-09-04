@@ -23,7 +23,7 @@ function main(input) {
   html += ".empty{text-align:center;padding:40px;color:#888}";
   html += ".footer{text-align:center;margin-top:24px;font-size:12px;color:#aaa}";
   html += ".attachments{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}";
-  html += ".attachments img{width:100px;height:100px;object-fit:cover;border-radius:8px;border:1px solid #e0e0e0}";
+  html += ".attachments img{width:120px;height:120px;object-fit:cover;border-radius:8px;border:1px solid #e0e0e0;cursor:pointer}";
   html += "</style></head><body><div class=\"container\">";
   html += "<h1>Signalements citoyens</h1>";
   html += "<p class=\"meta\">Association Veilleurs des Bauges — " + records.length + " signalement(s)</p>";
@@ -82,12 +82,16 @@ function main(input) {
         html += "</div></div>";
       }
 
-      // Attachments
+      // Attachments — inline as data URIs (hart CSP allows img-src data:)
       var atts = r.attachments || [];
       if (atts.length > 0) {
         html += "<div class=\"card-section\"><div class=\"label\">Images (" + atts.length + ")</div><div class=\"attachments\">";
         for (var j = 0; j < atts.length; j++) {
-          html += "<img src=\"https://bkn.intrane.fr/v1/files/veilleurs-attachments/" + atts[j].name + "\" alt=\"attachment " + (j+1) + "\" loading=\"lazy\">";
+          var fileData = bkn.files.get("veilleurs-attachments", atts[j].name, { encoding: "base64" });
+          if (fileData) {
+            var mime = atts[j].content_type || "image/jpeg";
+            html += "<img src=\"data:" + mime + ";base64," + fileData.content + "\" alt=\"image " + (j+1) + "\">";
+          }
         }
         html += "</div></div>";
       }
