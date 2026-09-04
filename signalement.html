@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Signalement citoyen — Veilleurs des Bauges</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'vdb-green': '#2F855A',
+            'vdb-forest': '#1F5A3A',
+            'vdb-sky': '#9AE6B4',
+            'vdb-cream': '#F3F9F4',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-vdb-cream text-gray-800 antialiased">
+
+<header class="bg-vdb-forest text-white">
+  <div class="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
+    <a href="/" class="flex items-center gap-3">
+      <img src="https://i.ibb.co/3w6vn6f/vdb-logo.png" alt="VDB" class="h-10">
+      <span class="font-semibold">Veilleurs des Bauges</span>
+    </a>
+    <nav class="flex gap-6 text-sm">
+      <a href="/" class="hover:text-vdb-sky">Accueil</a>
+      <a href="https://www.helloasso.com/associations/veilleurs-des-bauges" target="_blank" rel="noopener" class="hover:text-vdb-sky">Adhérer</a>
+    </nav>
+  </div>
+</header>
+
+<main class="max-w-3xl mx-auto px-6 py-12">
+
+  <h1 class="text-3xl font-bold text-vdb-forest mb-2">Formulaire de signalement citoyen</h1>
+  <p class="text-gray-600 mb-8">Association « Veilleurs des Bauges »</p>
+
+  <div class="bg-vdb-sky/30 border border-vdb-green/30 rounded-xl p-6 mb-8 text-sm text-gray-700">
+    <p class="font-semibold text-vdb-forest mb-2">Avant de signaler — Grille d'analyse préalable</p>
+    <p class="mb-2">Le signalement concerne-t-il potentiellement :</p>
+    <ul class="list-disc list-inside space-y-1 text-gray-600">
+      <li>Le respect des documents d'urbanisme (PLU)</li>
+      <li>Les OAP (Orientations d'Aménagement et de Programmation)</li>
+      <li>La compatibilité avec la Charte du Parc naturel régional du Massif des Bauges</li>
+      <li>Un impact sur la biodiversité, les milieux naturels ou les paysages</li>
+      <li>Un enjeu lié à l'intérêt collectif ou au bien commun</li>
+      <li>Un manque d'information, de transparence ou de concertation citoyenne</li>
+      <li>Une artificialisation ou une transformation importante du territoire</li>
+      <li>Un projet susceptible d'avoir des conséquences durables sur le cadre de vie</li>
+    </ul>
+    <p class="mt-2 text-gray-500 italic">Si aucun critère ne correspond, le signalement ne relève peut-être pas du champ d'action de l'association.</p>
+  </div>
+
+  <form id="signalement-form" class="space-y-8">
+
+    <!-- 1. Informations sur le déclarant -->
+    <fieldset class="bg-white rounded-xl shadow-md p-6">
+      <legend class="text-lg font-semibold text-vdb-forest px-3">1. Informations sur le déclarant</legend>
+      <div class="grid sm:grid-cols-2 gap-4 mt-4">
+        <div>
+          <label class="block text-sm font-medium mb-1">Nom / Prénom *</label>
+          <input name="declarant_name" required class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-vdb-sky focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Commune de résidence *</label>
+          <input name="declarant_commune" required class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-vdb-sky focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Adresse e-mail *</label>
+          <input name="declarant_email" type="email" required class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-vdb-sky focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Téléphone (facultatif)</label>
+          <input name="declarant_phone" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-vdb-sky focus:outline-none">
+        </div>
+      </div>
+      <div class="mt-4">
+        <label class="block text-sm font-medium mb-1">Souhaitez-vous que votre identité reste confidentielle auprès des tiers ?</label>
+        <div class="flex gap-4">
+          <label class="flex items-center gap-2"><input type="radio" name="confidential" value="true" class="accent-vdb-green"> Oui</label>
+          <label class="flex items-center gap-2"><input type="radio" name="confidential" value="false" class="accent-vdb-green"> Non</label>
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- 2. Nature du signalement -->
+    <fieldset class="bg-white rounded-xl shadow-md p-6">
+      <legend class="text-lg font-semibold text-vdb-forest px-3">2. Nature du signalement</legend>
+      <p class="text-sm text-gray-600 mt-4 mb-3">Quel type de situation souhaitez-vous signaler ?</p>
+      <div class="grid sm:grid-cols-2 gap-2" id="nature-checkboxes">
+        <label class="flex items-center gap-2"><input type="checkbox" name="nature" value="projet_construction" class="accent-vdb-green"> Projet de construction</label>
+        <label class="flex items-center gap-2"><input type="checkbox" name="nature" value="amenagement_touristique" class="accent-vdb-green"> Aménagement touristique</label>
+        <label class="flex items-center gap-2"><input type="checkbox" name="nature" value="travaux_infrastructure" class="accent-vdb-green"> Travaux ou infrastructure</label>
+        <label class="flex items-center gap-2"><input type="checkbox" name="nature" value="atteinte_paysages" class="accent-vdb-green"> Atteinte aux paysages</label>
+        <label class="flex items-center gap-2"><input type="checkbox" name="nature" value="atteinte_biodiversite" class="accent-vdb-green"> Atteinte à la biodiversité</label>
+        <label class="flex items-center gap-2"><input type="checkbox" name="nature" value="deboisement_artificialisation" class="accent-vdb-green"> Déboisement / artificialisation</label>
+        <label class="flex items-center gap-2"><input type="checkbox" name="nature" value="pollution_nuisance" class="accent-vdb-green"> Pollution / nuisance</label>
+        <label class="flex items-center gap-2"><input type="checkbox" name="nature" value="manque_information" class="accent-vdb-green"> Manque d'information ou de concertation</label>
+        <label class="flex items-center gap-2"><input type="checkbox" name="nature" value="non_respect_urbanisme" class="accent-vdb-green"> Non-respect d'un document d'urbanisme</label>
+        <label class="flex items-center gap-2"><input type="checkbox" name="nature" value="autre" class="accent-vdb-green"> Autre</label>
+      </div>
+    </fieldset>
+
+    <!-- 3. Localisation -->
+    <fieldset class="bg-white rounded-xl shadow-md p-6">
+      <legend class="text-lg font-semibold text-vdb-forest px-3">3. Localisation</legend>
+      <div class="grid sm:grid-cols-2 gap-4 mt-4">
+        <div>
+          <label class="block text-sm font-medium mb-1">Commune concernée *</label>
+          <input name="location_commune" required class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-vdb-sky focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Lieu précis / secteur</label>
+          <input name="location_place" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-vdb-sky focus:outline-none">
+        </div>
+        <div class="sm:col-span-2">
+          <label class="block text-sm font-medium mb-1">Références cadastrales (si connues)</label>
+          <input name="location_cadastre" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-vdb-sky focus:outline-none">
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- 4. Description -->
+    <fieldset class="bg-white rounded-xl shadow-md p-6">
+      <legend class="text-lg font-semibold text-vdb-forest px-3">4. Description du signalement</legend>
+      <label class="block text-sm text-gray-600 mt-4 mb-2">Merci de décrire les faits de manière la plus précise possible :</label>
+      <textarea name="description" required rows="5" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-vdb-sky focus:outline-none"></textarea>
+    </fieldset>
+
+    <!-- 5. Impacts -->
+    <fieldset class="bg-white rounded-xl shadow-md p-6">
+      <legend class="text-lg font-semibold text-vdb-forest px-3">5. Impacts ou préoccupations identifiés</legend>
+      <p class="text-sm text-gray-600 mt-4 mb-3">Selon vous, quels impacts ou enjeux sont concernés ?</p>
+      <div class="grid sm:grid-cols-2 gap-2" id="impacts-checkboxes">
+        <label class="flex items-center gap-2"><input type="checkbox" name="impacts" value="paysage" class="accent-vdb-green"> Paysage</label>
+        <label class="flex items-center gap-2"><input type="checkbox" name="impacts" value="biodiversite" class="accent-vdb-green"> Biodiversité</label>
+        <label class="flex items-center gap-2"><input type="checkbox" name="impacts" value="ressource_eau" class="accent-vdb-green"> Ressource en eau</label>
+        <label class="flex items-center gap-2"><input type="checkbox" name="impacts" value="artificialisation_sols" class="accent-vdb-green"> Artificialisation des sols</label>
+        <label class="flex items-center gap-2"><input type="checkbox" name="impacts" value="patrimoine" class="accent-vdb-green"> Patrimoine naturel ou bâti</label>
+        <label class="flex items-center gap-2"><input type="checkbox" name="impacts" value="cadre_vie" class="accent-vdb-green"> Cadre de vie des habitants</label>
+        <label class="flex items-center gap-2"><input type="checkbox" name="impacts" value="mobilite" class="accent-vdb-green"> Mobilité / circulation</label>
+        <label class="flex items-center gap-2"><input type="checkbox" name="impacts" value="coherence_territoire" class="accent-vdb-green"> Cohérence avec le territoire des Bauges</label>
+        <label class="flex items-center gap-2"><input type="checkbox" name="impacts" value="absence_concertation" class="accent-vdb-green"> Absence de concertation citoyenne</label>
+        <label class="flex items-center gap-2"><input type="checkbox" name="impacts" value="interet_collectif" class="accent-vdb-green"> Intérêt collectif insuffisamment pris en compte</label>
+        <label class="flex items-center gap-2"><input type="checkbox" name="impacts" value="autre" class="accent-vdb-green"> Autre</label>
+      </div>
+    </fieldset>
+
+    <!-- 6. Sources -->
+    <fieldset class="bg-white rounded-xl shadow-md p-6">
+      <legend class="text-lg font-semibold text-vdb-forest px-3">6. Sources et éléments disponibles</legend>
+      <p class="text-sm text-gray-600 mt-4 mb-3">Disposez-vous d'éléments permettant d'appuyer ce signalement ?</p>
+      <div class="grid sm:grid-cols-2 gap-2" id="sources-checkboxes">
+        <label class="flex items-center gap-2"><input type="checkbox" name="sources" value="photos" class="accent-vdb-green"> Photos</label>
+        <label class="flex items-center gap-2"><input type="checkbox" name="sources" value="articles_presse" class="accent-vdb-green"> Articles de presse</label>
+        <label class="flex items-center gap-2"><input type="checkbox" name="sources" value="deliberations" class="accent-vdb-green"> Délibérations municipales</label>
+        <label class="flex items-center gap-2"><input type="checkbox" name="sources" value="permis_construire" class="accent-vdb-green"> Permis de construire</label>
+        <label class="flex items-center gap-2"><input type="checkbox" name="sources" value="temoignages" class="accent-vdb-green"> Témoignages</label>
+        <label class="flex items-center gap-2"><input type="checkbox" name="sources" value="documents_urbanisme" class="accent-vdb-green"> Documents d'urbanisme</label>
+        <label class="flex items-center gap-2"><input type="checkbox" name="sources" value="liens_internet" class="accent-vdb-green"> Liens internet</label>
+        <label class="flex items-center gap-2"><input type="checkbox" name="sources" value="autres" class="accent-vdb-green"> Autres documents</label>
+      </div>
+    </fieldset>
+
+    <!-- 7. Niveau d'information -->
+    <fieldset class="bg-white rounded-xl shadow-md p-6">
+      <legend class="text-lg font-semibold text-vdb-forest px-3">7. Niveau d'information</legend>
+      <p class="text-sm text-gray-600 mt-4 mb-3">Comment avez-vous eu connaissance de cette situation ?</p>
+      <div class="grid sm:grid-cols-2 gap-2" id="info-checkboxes">
+        <label class="flex items-center gap-2"><input type="checkbox" name="info_source" value="observation" class="accent-vdb-green"> Observation personnelle</label>
+        <label class="flex items-center gap-2"><input type="checkbox" name="info_source" value="municipale" class="accent-vdb-green"> Information municipale</label>
+        <label class="flex items-center gap-2"><input type="checkbox" name="info_source" value="reseau_local" class="accent-vdb-green"> Réseau local / habitants</label>
+        <label class="flex items-center gap-2"><input type="checkbox" name="info_source" value="presse" class="accent-vdb-green"> Presse / réseaux sociaux</label>
+        <label class="flex items-center gap-2"><input type="checkbox" name="info_source" value="reunion_publique" class="accent-vdb-green"> Réunion publique</label>
+        <label class="flex items-center gap-2"><input type="checkbox" name="info_source" value="autre" class="accent-vdb-green"> Autre</label>
+      </div>
+    </fieldset>
+
+    <!-- 8. Engagement -->
+    <fieldset class="bg-white rounded-xl shadow-md p-6">
+      <legend class="text-lg font-semibold text-vdb-forest px-3">8. Engagement du déclarant</legend>
+      <div class="mt-4 space-y-2 text-sm text-gray-600">
+        <label class="flex items-start gap-2"><input type="checkbox" name="engagement_sincerite" required class="accent-vdb-green mt-1"> Je certifie que les informations transmises sont sincères et formulées de bonne foi.</label>
+        <label class="flex items-start gap-2"><input type="checkbox" name="engagement_analyse" required class="accent-vdb-green mt-1"> Je comprends que ce signalement fera l'objet d'une analyse préalable avant toute éventuelle action de l'association.</label>
+        <label class="flex items-start gap-2"><input type="checkbox" name="engagement_recontact" required class="accent-vdb-green mt-1"> J'accepte que l'association me recontacte si des précisions complémentaires sont nécessaires.</label>
+      </div>
+    </fieldset>
+
+    <!-- 9. Cadre éthique (info only) -->
+    <div class="bg-vdb-sky/20 border border-vdb-green/20 rounded-xl p-6 text-sm text-gray-600">
+      <p class="font-semibold text-vdb-forest mb-2">9. Cadre éthique du signalement</p>
+      <p>L'association « Veilleurs des Bauges » s'engage à : vérifier les informations transmises ; privilégier le dialogue, la transparence et l'intérêt général ; éviter toute diffusion abusive, diffamatoire ou non vérifiée ; respecter la confidentialité des personnes lorsque cela est nécessaire. Les signalements manifestement malveillants, diffamatoires, non fondés ou sans lien avec les missions de l'association ne seront pas traités.</p>
+    </div>
+
+    <div class="text-center">
+      <button type="submit" class="bg-vdb-green hover:bg-vdb-forest text-white px-10 py-3 rounded-lg font-semibold shadow-lg transition">
+        Envoyer le signalement
+      </button>
+    </div>
+
+  </form>
+
+  <div id="toast" class="hidden fixed bottom-5 right-5 px-6 py-3 rounded-lg shadow-lg z-50"></div>
+
+</main>
+
+<footer class="bg-vdb-forest text-white py-8">
+  <div class="max-w-6xl mx-auto px-6 text-center">
+    <p class="text-xs text-green-300">Association Veilleurs des Bauges — Association loi 1901</p>
+    <p class="text-green-200 text-sm">Massif des Bauges · Savoie · France</p>
+    <p class="text-green-200 text-sm mt-2">
+      <a href="mailto:veilleursdesbauges@protonmail.com" class="hover:text-vdb-sky">veilleursdesbauges@protonmail.com</a>
+    </p>
+  </div>
+</footer>
+
+<script>
+function getChecked(name) {
+  return Array.from(document.querySelectorAll('input[name="' + name + '"]:checked')).map(function(el) { return el.value; });
+}
+document.getElementById('signalement-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  var toast = document.getElementById('toast');
+  toast.classList.remove('hidden');
+  toast.textContent = 'Envoi en cours...';
+  toast.className = 'fixed bottom-5 right-5 bg-vdb-forest text-white px-6 py-3 rounded-lg shadow-lg z-50';
+  var data = {
+    declarant: {
+      name: this.declarant_name.value,
+      commune: this.declarant_commune.value,
+      email: this.declarant_email.value,
+      phone: this.declarant_phone.value,
+      confidential: this.confidential.value
+    },
+    nature: getChecked('nature'),
+    location: {
+      commune: this.location_commune.value,
+      place: this.location_place.value,
+      cadastre: this.location_cadastre.value
+    },
+    description: this.description.value,
+    impacts: getChecked('impacts'),
+    sources: getChecked('sources'),
+    info_source: getChecked('info_source'),
+    engagement: {
+      sincerite: this.engagement_sincerite.checked,
+      analyse: this.engagement_analyse.checked,
+      recontact: this.engagement_recontact.checked
+    },
+    source: 'veilleursdesbauges.fr'
+  };
+  try {
+    var response = await fetch('https://bkn.intrane.fr/v1/hooks/signalement-create', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    if (response.ok) {
+      toast.textContent = 'Signalement envoyé. Merci pour votre contribution !';
+      toast.className = 'fixed bottom-5 right-5 bg-vdb-green text-white px-6 py-3 rounded-lg shadow-lg z-50';
+      this.reset();
+    } else {
+      toast.textContent = 'Erreur lors de l\'envoi. Veuillez réessayer.';
+      toast.className = 'fixed bottom-5 right-5 bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+    }
+  } catch (err) {
+    toast.textContent = 'Erreur de connexion. Veuillez réessayer.';
+    toast.className = 'fixed bottom-5 right-5 bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+  }
+  setTimeout(function() { toast.classList.add('hidden'); }, 5000);
+});
+</script>
+
+</body>
+</html>
