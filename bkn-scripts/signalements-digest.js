@@ -11,10 +11,12 @@ function main(input) {
   html += "h1{color:#1f5a3a;margin-bottom:8px}";
   html += ".meta{color:#888;font-size:14px;margin-bottom:24px}";
   html += ".card{background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.08);padding:20px;margin-bottom:16px}";
+  html += ".card.mock{border:2px dashed #d69e2e;background:#fffbeb}";
   html += ".card-header{display:flex;justify-content:space-between;align-items:start;margin-bottom:12px}";
   html += ".card-title{font-size:18px;font-weight:600;color:#1f5a3a}";
   html += ".card-status{font-size:12px;padding:3px 10px;border-radius:20px;background:#e6f4ea;color:#2f855a;text-transform:uppercase}";
   html += ".card-status.new{background:#fff3cd;color:#856404}";
+  html += ".mock-badge{font-size:11px;padding:2px 8px;border-radius:4px;background:#d69e2e;color:#fff;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}";
   html += ".card-section{margin-bottom:10px}";
   html += ".label{font-size:12px;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px}";
   html += ".value{font-size:14px;color:#333}";
@@ -45,11 +47,20 @@ function main(input) {
       var d = r.declarant || {};
       var loc = r.location || {};
       var statusClass = r.status === "new" ? " new" : "";
-      html += "<div class=\"card\">";
+      var isMock = r.mock === true;
+      var cardClass = isMock ? "card mock" : "card";
+      html += "<div class=\"" + cardClass + "\">";
       html += "<div class=\"card-header\">";
       html += "<div class=\"card-title\">" + (d.name || "Anonyme") + " — " + (loc.commune || "Lieu non précisé") + "</div>";
+      html += "<div style=\"display:flex;gap:6px;align-items:center\">";
+      if (isMock) html += "<span class=\"mock-badge\">MOCK</span>";
       html += "<span class=\"card-status" + statusClass + "\">" + (r.status || "new") + "</span>";
       html += "</div>";
+      html += "</div>";
+
+      if (isMock && r.mock_note) {
+        html += "<div class=\"card-section\" style=\"background:#fefcbf;padding:8px 12px;border-radius:6px;margin-bottom:12px\"><div class=\"value\" style=\"font-size:13px;color:#975a16\"><strong>⚠ Mock signalement:</strong> " + r.mock_note + "</div></div>";
+      }
 
       html += "<div class=\"card-section\"><div class=\"label\">Description</div><div class=\"value\">" + (r.description || "") + "</div></div>";
 
@@ -91,7 +102,7 @@ function main(input) {
         html += "</div></div>";
       }
 
-      // Attachments — images inlined as data URIs, docs as clickable links
+      // Attachments
       var atts = r.attachments || [];
       if (atts.length > 0) {
         html += "<div class=\"card-section\"><div class=\"label\">Fichiers (" + atts.length + ")</div><div class=\"attachments\">";
