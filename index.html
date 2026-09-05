@@ -30,22 +30,17 @@
       background:
         linear-gradient(to bottom, rgba(0,0,0,0.35), rgba(0,0,0,0.6)),
         url("assets/hero.jpg");
-      background-size: 100% 100%;
+      background-size: cover;
       background-repeat: no-repeat;
       background-position: center;
-      animation: subtleZoom 20s ease-in-out infinite;
     }
-    @keyframes subtleZoom {
-      0% { background-size: 100% 100%; }
-      50% { background-size: 105% 105%; }
-      100% { background-size: 100% 100%; }
-    }
-    @media (max-width: 768px) {
-      .hero-bg {
-        animation: none;
-        background-size: cover;
-        background-repeat: no-repeat;
-      }
+    .hero-credit{
+      position: absolute;
+      bottom: 0.5rem;
+      right: 0.75rem;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.7);
+      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
     }
   </style>
 </head>
@@ -67,7 +62,7 @@
   </div>
 </header>
 
-<section class="hero-bg text-white min-h-[60vh] flex items-center">
+<section class="hero-bg text-white min-h-[60vh] flex items-center relative">
   <div class="max-w-5xl mx-auto px-6 text-center">
      <div class="flex items-center justify-center mb-4">
       <img src="https://i.ibb.co/3w6vn6f/vdb-logo.png" alt="VDB Logo" class="max-h-[300px]">
@@ -88,6 +83,7 @@
       </a>
     </div>
   </div>
+  <div class="hero-credit">© Photographie Pierre Borasci</div>
 </section>
 
 <main class="max-w-8xl mx-auto px-6 py-20">
