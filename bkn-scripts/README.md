@@ -9,7 +9,7 @@ Backed up here for rollback and reproducibility.
 |------|----------------|-------------|
 | `newsletter-subscribe.js` | `newsletter-subscribe` | Newsletter signup, stores to `veilleurs/subscribers` |
 | `signalement-create.js` | `signalement-create` | Citizen report form, stores to `veilleurs/signalements` (with `attachments: []`) |
-| `signalement-attachment.js` | `signalement-attachment` | File upload for signalements (max 5, JPEG/PNG/PDF/DOCX, magic bytes check) |
+| `signalement-attachment.js` | `signalement-attachment` | File upload for signalements (max 5 advisory, JPEG/PNG/PDF/DOCX, magic bytes check). Appends with `$push` and names files with `bkn.id()`, so parallel uploads cannot overwrite each other — see *Concurrent uploads* |
 | `signalements-digest.js` | `signalements-digest` | Hourly cron, publishes signalements to hart (with attachment thumbnails) |
 
 ## Collections
@@ -36,6 +36,39 @@ Backed up here for rollback and reproducibility.
 | Namespace | Public | Allow types | Description |
 |-----------|--------|-------------|-------------|
 | `veilleurs-attachments` | yes | image/jpeg, image/png, application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document | Signalement attachments (photos + documents) |
+
+## Concurrent uploads
+
+The browser sends each selected file as its own request, in parallel. Until
+2026-09-06 this script read the whole signalement, appended to the array and
+wrote the record back — so **five files arrived as one attachment**, measured,
+not theorised. Two separate bugs produced that:
+
+1. **Lost update.** Every concurrent request read the same array, appended to
+   its own copy and wrote the whole record back. Last writer won.
+2. **Colliding filenames.** The name was
+   `<id>-<attachments.length>-<hmac(bkn.now() + length)>`, and `bkn.now()` has
+   *second* resolution — so uploads arriving in the same second, all seeing
+   length 0, computed the **same** name, and each `files.put` repointed that
+   name at its own blob.
+
+Both are fixed, and neither fix can be undone by accident:
+
+- the array is appended with `bkn.store.patch(..., {attachments: {"$push": …}})`,
+  which the store computes under compare-and-set, so concurrent pushes
+  accumulate;
+- the filename is `<id>-<bkn.id()>.<ext>` — a ULID, unique by construction,
+  derived from nothing this request read.
+
+Requires bkn **v0.2.0 or later** (`$push` landed there). Verified against
+v0.3.0: five parallel uploads produce five attachments with five distinct
+names, each resolving to its own blob.
+
+**The max-5 bound is advisory under concurrency.** It is a cheap rejection for
+a caller already at the limit, but five simultaneous uploads all read the same
+length, and the store has no "push if shorter than n". A sixth attachment
+costs a slightly long row; losing a citizen's evidence does not, which is why
+the guarantee is on the append rather than on the bound.
 
 ## Restore
 
