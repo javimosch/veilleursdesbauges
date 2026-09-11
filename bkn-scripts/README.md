@@ -11,6 +11,7 @@ Backed up here for rollback and reproducibility.
 | `signalement-create.js` | `signalement-create` | Citizen report form, stores to `veilleurs/signalements` (with `attachments: []`) |
 | `signalement-attachment.js` | `signalement-attachment` | File upload for signalements (max 5 advisory, JPEG/PNG/PDF/DOCX, magic bytes check). Appends with `$push` and names files with `bkn.id()`, so parallel uploads cannot overwrite each other — see *Concurrent uploads* |
 | `signalements-digest.js` | `signalements-digest` | Hourly cron, publishes signalements to hart (with attachment thumbnails) |
+| `subscribers-digest.js` | `subscribers-digest` | Daily cron, publishes subscriber list to hart (private, password-gated) |
 
 ## Collections
 
@@ -30,6 +31,7 @@ Backed up here for rollback and reproducibility.
 | Name | Schedule | Script |
 |------|----------|--------|
 | `signalements-digest` | `@hourly` | `signalements-digest` |
+| `subscribers-digest` | `@daily` | `subscribers-digest` |
 
 ## Files namespaces
 
@@ -87,6 +89,9 @@ bkn script create signalement-attachment -file bkn-scripts/signalement-attachmen
 bkn script create signalements-digest -file bkn-scripts/signalements-digest.js \
   -description "Collect signalements and publish to hart" -timeout 15000 \
   -allow-net hart.intrane.fr
+bkn script create subscribers-digest -file bkn-scripts/subscribers-digest.js \
+  -description "Publish subscriber list to hart (private)" -timeout 15000 \
+  -allow-net hart.intrane.fr
 
 # Recreate files namespace
 bkn files ns create veilleurs-attachments \
@@ -111,4 +116,5 @@ bkn hooks create signalement-attachment -script signalement-attachment \
 
 # Recreate cron
 bkn cron create signalements-digest -schedule "@hourly" -script signalements-digest
+bkn cron create subscribers-digest -schedule "@daily" -script subscribers-digest
 ```
