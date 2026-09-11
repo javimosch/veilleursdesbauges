@@ -39,17 +39,8 @@ function main(input) {
 
   // Stats
   var total = records.length;
-  var subscribers = 0;
-  var veilleurs = 0;
-  for (var i = 0; i < records.length; i++) {
-    var t = records[i].type || "subscriber";
-    if (t === "veilleur") veilleurs++;
-    else subscribers++;
-  }
   html += "<div class=\"stats\">";
   html += "<div class=\"stat\"><div class=\"stat-num\">" + total + "</div><div class=\"stat-label\">Total</div></div>";
-  html += "<div class=\"stat\"><div class=\"stat-num\">" + subscribers + "</div><div class=\"stat-label\">Abonnes</div></div>";
-  html += "<div class=\"stat\"><div class=\"stat-num\">" + veilleurs + "</div><div class=\"stat-label\">Veilleurs</div></div>";
   html += "</div>";
 
   // Collect emails for the copy button
