@@ -23,6 +23,10 @@ function main(input) {
   html += ".stat{background:#fff;border-radius:8px;padding:12px 20px;box-shadow:0 1px 4px rgba(0,0,0,0.06)}";
   html += ".stat-num{font-size:28px;font-weight:700;color:#1f5a3a}";
   html += ".stat-label{font-size:12px;color:#888;text-transform:uppercase;letter-spacing:0.5px}";
+  html += ".copy-bar{margin-bottom:20px}";
+  html += ".copy-btn{background:#1f5a3a;color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:14px;font-weight:600;cursor:pointer;transition:background 0.2s}";
+  html += ".copy-btn:hover{background:#164028}";
+  html += ".copy-btn.copied{background:#2f855a}";
   html += "</style></head><body><div class=\"container\">";
   html += "<h1>Abonnes a la newsletter</h1>";
   html += "<p class=\"meta\">Association Veilleurs des Bauges — liste des abonnes</p>";
@@ -42,6 +46,12 @@ function main(input) {
   html += "<div class=\"stat\"><div class=\"stat-num\">" + veilleurs + "</div><div class=\"stat-label\">Veilleurs</div></div>";
   html += "</div>";
 
+  // Collect emails for the copy button
+  var emails = [];
+  for (var i = 0; i < records.length; i++) {
+    if (records[i].email) emails.push(records[i].email);
+  }
+
   if (records.length === 0) {
     html += "<div class=\"empty\">Aucun abonne pour le moment.</div>";
   } else {
@@ -60,6 +70,23 @@ function main(input) {
       html += "</tr>";
     }
     html += "</tbody></table>";
+  }
+
+  // Copy button (comma-separated emails)
+  if (emails.length > 0) {
+    html += "<div class=\"copy-bar\"><button class=\"copy-btn\" id=\"copyEmails\">Copier les emails (" + emails.length + ")</button></div>";
+    html += "<script>";
+    html += "var emails=" + JSON.stringify(emails) + ";";
+    html += "document.getElementById('copyEmails').addEventListener('click',function(){";
+    html += "var text=emails.join(', ');";
+    html += "var btn=this;";
+    html += "if(navigator.clipboard&&navigator.clipboard.writeText){";
+    html += "navigator.clipboard.writeText(text).then(function(){btn.textContent='Copie !';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copier les emails (" + emails.length + ")';btn.classList.remove('copied');},2000);});";
+    html += "}else{";
+    html += "var ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);";
+    html += "btn.textContent='Copie !';btn.classList.add('copied');setTimeout(function(){btn.textContent='Copier les emails (" + emails.length + ")';btn.classList.remove('copied');},2000);";
+    html += "}});";
+    html += "</script>";
   }
 
   html += "<div class=\"footer\">Genere automatiquement · " + bkn.now() + "</div>";
