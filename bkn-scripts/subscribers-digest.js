@@ -96,7 +96,7 @@ function main(input) {
   html += "<div class=\"footer\">Genere automatiquement · " + bkn.now() + "</div>";
   html += "</div></body></html>";
 
-  var resp = bkn.http.fetch("https://hart.intrane.fr/v1/publish?owner=vdb&artifact=subscribers&title=Abonnes%20VDB&format=html&visibility=private&read_key=EcoSentinel2026%40", {
+  var resp = bkn.http.fetch("https://hart.intrane.fr/v1/publish?owner=vdb&artifact=subscribers&title=Abonnes%20VDB&format=html&visibility=private&read_key=bauges", {
     method: "POST",
     headers: { "Content-Type": "text/html" },
     body: html
