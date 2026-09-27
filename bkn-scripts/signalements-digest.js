@@ -108,7 +108,7 @@ function main(input) {
         html += "<div class=\"card-section\"><div class=\"label\">Fichiers (" + atts.length + ")</div><div class=\"attachments\">";
         for (var j = 0; j < atts.length; j++) {
           var ct = atts[j].content_type || "image/jpeg";
-          var rawUrl = "https://bkn.intrane.fr/v1/files/veilleurs-attachments/" + atts[j].name;
+          var rawUrl = "https://bkn-vdb.intrane.fr/v1/files/veilleurs-attachments/" + atts[j].name;
           var displayName = atts[j].original_name || atts[j].name;
           var sizeKb = Math.round(atts[j].size / 1024);
           if (ct.indexOf("image/") === 0) {
